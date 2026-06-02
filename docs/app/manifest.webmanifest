@@ -1,0 +1,19 @@
+{
+  "name": "Meu 1º Afinador Violão",
+  "short_name": "Afinador",
+  "description": "Afinador simples para violão, feito para iniciantes.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#151718",
+  "theme_color": "#151718",
+  "icons": [
+    {
+      "src": "./app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
