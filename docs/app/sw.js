@@ -1,10 +1,11 @@
-const CACHE_NAME = 'meu-primeiro-afinador-pwa-v4';
+const CACHE_NAME = 'meu-primeiro-afinador-pwa-v5';
 const PRECACHE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './app-icon.png',
   './store-cover.png',
+  './headstock.png',
 ];
 
 self.addEventListener('install', (event) => {

@@ -297,7 +297,7 @@
       color: #102113;
     }
 
-    .logo-stage {
+    .headstock-stage {
       align-items: center;
       background: #101213;
       border-radius: 8px;
@@ -310,7 +310,7 @@
       position: relative;
     }
 
-    .logo-stage img {
+    .headstock-stage img {
       height: 100%;
       max-height: 100%;
       object-fit: contain;
@@ -335,21 +335,9 @@
     }
 
     .image-marker.selected {
-      background: var(--green);
-      box-shadow: 0 0 0 5px rgba(120, 199, 123, 0.28);
-    }
-
-    .image-marker.tighten {
-      background: var(--yellow);
-    }
-
-    .image-marker.loosen {
-      background: var(--red);
-      color: white;
-    }
-
-    .image-marker.tuned {
-      background: var(--green);
+      background: var(--paper);
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 5px rgba(255, 209, 102, 0.28);
     }
 
     .marker-action {
@@ -448,8 +436,8 @@
 
     <section class="strings" id="strings"></section>
 
-    <section class="logo-stage" id="logoStage">
-      <img src="./app-icon.png" alt="">
+    <section class="headstock-stage" id="headstockStage">
+      <img src="./headstock.png" alt="">
       <div class="marker-action" id="markerAction">Toque a corda</div>
     </section>
   </main>
@@ -482,7 +470,7 @@
     const centsText = document.getElementById('centsText');
     const tightenZone = document.getElementById('tightenZone');
     const loosenZone = document.getElementById('loosenZone');
-    const logoStage = document.getElementById('logoStage');
+    const headstockStage = document.getElementById('headstockStage');
     const markerAction = document.getElementById('markerAction');
 
     let deferredPrompt = null;
@@ -550,29 +538,25 @@
 
     function renderImageMarkers(tighten = false, loosen = false, tuned = false, hasReading = false) {
       const markerLayout = [
-        { number: 1, x: 72, y: 62 },
-        { number: 2, x: 72, y: 50 },
-        { number: 3, x: 70, y: 38 },
-        { number: 4, x: 30, y: 38 },
-        { number: 5, x: 28, y: 50 },
-        { number: 6, x: 28, y: 62 },
+        { number: 1, x: 72, y: 47 },
+        { number: 2, x: 72, y: 33 },
+        { number: 3, x: 72, y: 20 },
+        { number: 4, x: 28, y: 20 },
+        { number: 5, x: 28, y: 33 },
+        { number: 6, x: 28, y: 47 },
       ];
 
-      logoStage.querySelectorAll('.image-marker').forEach((marker) => marker.remove());
+      headstockStage.querySelectorAll('.image-marker').forEach((marker) => marker.remove());
 
       markerLayout.forEach((markerInfo) => {
         const marker = document.createElement('div');
         const selected = STRINGS[selectedIndex].number === markerInfo.number;
         marker.className = `image-marker${selected ? ' selected' : ''}`;
 
-        if (selected && tighten) marker.classList.add('tighten');
-        if (selected && loosen) marker.classList.add('loosen');
-        if (selected && tuned) marker.classList.add('tuned');
-
         marker.style.left = `${markerInfo.x}%`;
         marker.style.top = `${markerInfo.y}%`;
         marker.textContent = formatStringNumber(markerInfo.number);
-        logoStage.appendChild(marker);
+        headstockStage.appendChild(marker);
       });
 
       markerAction.className = 'marker-action';
