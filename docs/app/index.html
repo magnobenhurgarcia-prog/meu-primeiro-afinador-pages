@@ -1,47 +1,604 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Meu 1º Afinador Violão</title>
-    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
-    <style id="expo-reset">
-      /* These styles make the body full-height */
-      html,
-      body {
-        height: 100%;
-      }
-      /* These styles disable body scrolling if you are using <ScrollView> */
-      body {
-        overflow: hidden;
-      }
-      /* These styles make the root element full-height */
-      #root {
-        display: flex;
-        height: 100%;
-        flex: 1;
-      }
-    </style>
-  <link rel="icon" href="./favicon.ico" /><link rel="manifest" href="./manifest.webmanifest" />
-  <meta name="theme-color" content="#151718" />
-  <link rel="apple-touch-icon" href="./app-icon.png" />
-</head>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Meu 1º Afinador Violão</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./app-icon.png">
+  <meta name="theme-color" content="#151718">
+  <style>
+    :root {
+      --bg: #151718;
+      --panel: #252927;
+      --line: #3b403c;
+      --paper: #f7f1e5;
+      --muted: #a7b0a5;
+      --green: #78c77b;
+      --yellow: #ffd166;
+      --red: #ff5a5f;
+    }
 
-  <body>
-    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-    <!-- The root element for your Expo app. -->
-    <div id="root"></div>
-  <script src="./_expo/static/js/web/index-6e52958993914d83b8582e9179dc35c3.js" defer></script>
-<script>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      height: 44px;
+      padding: 0 16px;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      max-width: 480px;
+      padding: calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 14px);
+      width: 100%;
+    }
+
+    .cover {
+      align-items: center;
+      background: var(--bg);
+      display: flex;
+      inset: 0;
+      justify-content: center;
+      opacity: 1;
+      position: fixed;
+      transition: opacity 260ms ease;
+      z-index: 20;
+    }
+
+    .cover.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cover img {
+      height: 100%;
+      object-fit: contain;
+      width: 100%;
+    }
+
+    .top {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      line-height: 1.05;
+      margin: 0;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      margin: 3px 0 0;
+    }
+
+    .install {
+      background: var(--yellow);
+      color: #191610;
+      display: none;
+      min-width: 102px;
+    }
+
+    .install.visible {
+      display: block;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .string-card {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .string-badge {
+      align-items: center;
+      background: var(--paper);
+      border-radius: 8px;
+      color: var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 72px;
+      justify-content: center;
+      width: 140px;
+    }
+
+    .string-badge.tighten {
+      background: var(--yellow);
+    }
+
+    .string-badge.loosen {
+      background: var(--red);
+    }
+
+    .string-badge.tuned {
+      background: var(--green);
+    }
+
+    .string-number {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 40px;
+    }
+
+    .string-label {
+      color: #5e665c;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .instruction {
+      color: var(--yellow);
+      font-size: 28px;
+      font-weight: 900;
+      margin: 2px 0;
+      text-align: center;
+    }
+
+    .instruction.loosen {
+      color: var(--red);
+    }
+
+    .instruction.tuned {
+      color: var(--green);
+    }
+
+    .meter {
+      background: #101213;
+      border-radius: 8px;
+      height: 44px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+
+    .meter-zone {
+      align-items: center;
+      bottom: 0;
+      color: white;
+      display: none;
+      font-size: 15px;
+      font-weight: 900;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      width: 50%;
+    }
+
+    .meter-zone.visible {
+      display: flex;
+    }
+
+    .meter-zone.tighten {
+      background: var(--yellow);
+      left: 0;
+    }
+
+    .meter-zone.loosen {
+      background: var(--red);
+      right: 0;
+    }
+
+    .center-line {
+      background: var(--green);
+      bottom: 0;
+      left: 50%;
+      margin-left: -1.5px;
+      position: absolute;
+      top: 0;
+      width: 3px;
+    }
+
+    .needle {
+      background: var(--paper);
+      border-radius: 4px;
+      bottom: 7px;
+      left: 50%;
+      margin-left: -3px;
+      position: absolute;
+      top: 7px;
+      transition: left 80ms linear;
+      width: 6px;
+    }
+
+    .meter-labels {
+      align-items: center;
+      color: var(--muted);
+      display: flex;
+      font-size: 13px;
+      font-weight: 800;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .cents {
+      color: var(--paper);
+      font-size: 15px;
+    }
+
+    .mic {
+      background: var(--paper);
+      color: var(--bg);
+      width: 100%;
+    }
+
+    .mic.active {
+      background: var(--green);
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      min-height: 18px;
+      text-align: center;
+    }
+
+    .strings {
+      display: grid;
+      gap: 6px;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .string-button {
+      background: #343936;
+      color: var(--paper);
+      height: 40px;
+      padding: 0;
+    }
+
+    .string-button.selected {
+      background: var(--green);
+      color: #102113;
+    }
+
+    .hero {
+      align-items: center;
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .hero img {
+      border-radius: 8px;
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    .hint {
+      background: rgba(255, 209, 102, 0.12);
+      border: 1px solid rgba(255, 209, 102, 0.35);
+      border-radius: 8px;
+      color: var(--paper);
+      display: none;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      padding: 10px;
+    }
+
+    .hint.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover" id="cover">
+    <img src="./store-cover.png" alt="">
+  </div>
+
+  <main class="app">
+    <header class="top">
+      <div class="brand">
+        <h1>Meu 1º Afinador Violão</h1>
+        <p>Magno Benhur Garcia Ensino de Música</p>
+      </div>
+      <button class="install" id="installButton">Instalar</button>
+    </header>
+
+    <section class="hint" id="installHint">
+      Para instalar: no Chrome Android, toque em “Instalar” quando aparecer, ou use o menu ⋮ e escolha “Adicionar à tela inicial”.
+    </section>
+
+    <section class="panel string-card">
+      <div class="string-badge" id="stringBadge">
+        <div class="string-number" id="stringNumber">1ª</div>
+        <div class="string-label">corda</div>
+      </div>
+      <div class="instruction" id="instruction">Toque a corda</div>
+      <div class="meter">
+        <div class="meter-zone tighten" id="tightenZone">Aperte a corda</div>
+        <div class="meter-zone loosen" id="loosenZone">solta a corda</div>
+        <div class="center-line"></div>
+        <div class="needle" id="needle"></div>
+      </div>
+      <div class="meter-labels">
+        <span>Aperte a corda</span>
+        <span class="cents" id="centsText">0 cents</span>
+        <span>Solta a corda</span>
+      </div>
+    </section>
+
+    <button class="mic" id="micButton">Ligar mic</button>
+    <div class="status" id="status">Aguardando microfone</div>
+
+    <section class="strings" id="strings"></section>
+
+    <section class="hero">
+      <img src="./app-icon.png" alt="">
+    </section>
+  </main>
+
+  <script>
+    const STRINGS = [
+      { number: 1, note: 'E4', frequency: 329.63 },
+      { number: 2, note: 'B3', frequency: 246.94 },
+      { number: 3, note: 'G3', frequency: 196.0 },
+      { number: 4, note: 'D3', frequency: 146.83 },
+      { number: 5, note: 'A2', frequency: 110.0 },
+      { number: 6, note: 'E2', frequency: 82.41 },
+    ];
+
+    const IN_TUNE_LIMIT = 5;
+    const DISPLAY_LIMIT = 50;
+    const MIN_FREQUENCY = 65;
+    const MAX_FREQUENCY = 450;
+
+    const cover = document.getElementById('cover');
+    const installButton = document.getElementById('installButton');
+    const installHint = document.getElementById('installHint');
+    const micButton = document.getElementById('micButton');
+    const statusText = document.getElementById('status');
+    const stringsEl = document.getElementById('strings');
+    const stringBadge = document.getElementById('stringBadge');
+    const stringNumber = document.getElementById('stringNumber');
+    const instruction = document.getElementById('instruction');
+    const needle = document.getElementById('needle');
+    const centsText = document.getElementById('centsText');
+    const tightenZone = document.getElementById('tightenZone');
+    const loosenZone = document.getElementById('loosenZone');
+
+    let deferredPrompt = null;
+    let audioContext = null;
+    let analyser = null;
+    let stream = null;
+    let rafId = null;
+    let selectedIndex = 0;
+
+    setTimeout(() => cover.classList.add('hidden'), 1800);
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installButton.classList.add('visible');
+      installHint.classList.add('visible');
+    });
+
+    installButton.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        installHint.classList.add('visible');
+        return;
+      }
+
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installButton.classList.remove('visible');
+    });
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
+
+    function formatStringNumber(number) {
+      return `${number}ª`;
+    }
+
+    function centsFromFrequency(frequency, targetFrequency) {
+      return 1200 * Math.log2(frequency / targetFrequency);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function renderStringButtons() {
+      stringsEl.innerHTML = '';
+
+      STRINGS.forEach((guitarString, index) => {
+        const button = document.createElement('button');
+        button.className = `string-button${index === selectedIndex ? ' selected' : ''}`;
+        button.textContent = formatStringNumber(guitarString.number);
+        button.addEventListener('click', () => {
+          selectedIndex = index;
+          updateDisplay(0, false);
+          renderStringButtons();
+          statusText.textContent = `Toque a ${formatStringNumber(guitarString.number)} corda`;
+        });
+        stringsEl.appendChild(button);
+      });
+    }
+
+    function updateDisplay(cents, hasReading = true) {
+      const currentString = STRINGS[selectedIndex];
+      const roundedCents = Math.round(clamp(cents, -DISPLAY_LIMIT, DISPLAY_LIMIT));
+      const tuned = hasReading && Math.abs(roundedCents) <= IN_TUNE_LIMIT;
+      const tighten = hasReading && roundedCents < -IN_TUNE_LIMIT;
+      const loosen = hasReading && roundedCents > IN_TUNE_LIMIT;
+
+      stringNumber.textContent = formatStringNumber(currentString.number);
+      stringBadge.className = 'string-badge';
+      instruction.className = 'instruction';
+      tightenZone.classList.toggle('visible', tighten);
+      loosenZone.classList.toggle('visible', loosen);
+
+      if (!hasReading) {
+        instruction.textContent = 'Toque a corda';
+      } else if (tuned) {
+        stringBadge.classList.add('tuned');
+        instruction.classList.add('tuned');
+        instruction.textContent = 'Afinada';
+      } else if (tighten) {
+        stringBadge.classList.add('tighten');
+        instruction.textContent = 'Aperte a corda';
+      } else if (loosen) {
+        stringBadge.classList.add('loosen');
+        instruction.classList.add('loosen');
+        instruction.textContent = 'Solte a corda';
+      }
+
+      const position = 50 + (roundedCents / DISPLAY_LIMIT) * 50;
+      needle.style.left = `${position}%`;
+      centsText.textContent = `${roundedCents > 0 ? '+' : ''}${roundedCents} cents`;
+    }
+
+    function detectPitch(samples, sampleRate) {
+      let rms = 0;
+      for (let i = 0; i < samples.length; i += 1) {
+        rms += samples[i] * samples[i];
+      }
+      rms = Math.sqrt(rms / samples.length);
+
+      if (rms < 0.012) return null;
+
+      const minTau = Math.floor(sampleRate / MAX_FREQUENCY);
+      const maxTau = Math.floor(sampleRate / MIN_FREQUENCY);
+      let bestTau = -1;
+      let bestCorrelation = 0;
+
+      for (let tau = minTau; tau <= maxTau; tau += 1) {
+        let correlation = 0;
+        const limit = samples.length - tau;
+
+        for (let i = 0; i < limit; i += 1) {
+          correlation += 1 - Math.abs(samples[i] - samples[i + tau]);
+        }
+
+        correlation /= limit;
+
+        if (correlation > bestCorrelation) {
+          bestCorrelation = correlation;
+          bestTau = tau;
+        }
+      }
+
+      if (bestTau < 0 || bestCorrelation < 0.92) return null;
+
+      const frequency = sampleRate / bestTau;
+      return frequency >= MIN_FREQUENCY && frequency <= MAX_FREQUENCY ? frequency : null;
+    }
+
+    function tick() {
+      if (!analyser || !audioContext) return;
+
+      const samples = new Float32Array(analyser.fftSize);
+      analyser.getFloatTimeDomainData(samples);
+      const frequency = detectPitch(samples, audioContext.sampleRate);
+
+      if (frequency) {
+        const currentString = STRINGS[selectedIndex];
+        const cents = centsFromFrequency(frequency, currentString.frequency);
+        updateDisplay(cents, true);
+        statusText.textContent = `${frequency.toFixed(2)} Hz`;
+      } else {
+        statusText.textContent = 'Toque a corda com som claro';
+      }
+
+      rafId = requestAnimationFrame(tick);
+    }
+
+    async function startMic() {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        statusText.textContent = 'Este navegador não liberou microfone para o PWA';
+        return;
+      }
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+          },
+        });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+        micButton.textContent = 'Mic ligado';
+        micButton.classList.add('active');
+        statusText.textContent = `Toque a ${formatStringNumber(STRINGS[selectedIndex].number)} corda`;
+        tick();
+      } catch (error) {
+        statusText.textContent = 'Permissão de microfone negada ou indisponível';
+      }
+    }
+
+    function stopMic() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      stream = null;
+      analyser = null;
+      micButton.textContent = 'Ligar mic';
+      micButton.classList.remove('active');
+      statusText.textContent = 'Microfone desligado';
+      updateDisplay(0, false);
+    }
+
+    micButton.addEventListener('click', () => {
+      if (stream) {
+        stopMic();
+      } else {
+        startMic();
+      }
+    });
+
+    renderStringButtons();
+    updateDisplay(0, false);
   </script>
 </body>
 </html>
