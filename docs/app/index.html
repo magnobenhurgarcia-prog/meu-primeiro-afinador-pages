@@ -297,7 +297,7 @@
       color: #102113;
     }
 
-    .headstock-stage {
+    .logo-stage {
       align-items: center;
       background: #101213;
       border-radius: 8px;
@@ -306,141 +306,87 @@
       justify-content: center;
       min-height: 0;
       overflow: hidden;
-      padding: 10px;
+      padding: 0;
       position: relative;
     }
 
-    .headstock {
-      background: linear-gradient(180deg, #f8e7b7, #d79b31);
-      border-radius: 38px 38px 18px 18px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-      height: min(100%, 360px);
-      max-height: 360px;
-      min-height: 230px;
-      position: relative;
-      width: 150px;
+    .logo-stage img {
+      height: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      width: 100%;
     }
 
-    .headstock::before {
-      background: #e7b04a;
-      border-radius: 0 0 8px 8px;
-      bottom: -64px;
-      content: "";
-      height: 72px;
-      left: 42px;
-      position: absolute;
-      width: 66px;
-    }
-
-    .headstock::after {
-      background: #f7f1e5;
-      border-radius: 7px;
-      bottom: 52px;
-      content: "";
-      height: 16px;
-      left: 22px;
-      position: absolute;
-      width: 106px;
-      z-index: 2;
-    }
-
-    .peg {
+    .image-marker {
       align-items: center;
-      background: #f7d274;
-      border: 2px solid #9d711b;
-      border-radius: 50%;
-      color: #151718;
+      background: rgba(247, 241, 229, 0.92);
+      border: 2px solid rgba(21, 23, 24, 0.78);
+      border-radius: 999px;
+      color: var(--bg);
       display: flex;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       height: 42px;
       justify-content: center;
       position: absolute;
-      width: 42px;
-      z-index: 4;
-    }
-
-    .peg.selected {
-      background: var(--green);
-      border-color: var(--paper);
-      box-shadow: 0 0 0 5px rgba(120, 199, 123, 0.28);
-    }
-
-    .peg.tighten {
-      background: var(--yellow);
-      border-color: var(--paper);
-    }
-
-    .peg.loosen {
-      background: var(--red);
-      border-color: var(--paper);
-      color: white;
-    }
-
-    .peg.tuned {
-      background: var(--green);
-      border-color: var(--paper);
-    }
-
-    .peg.left {
-      left: -48px;
-    }
-
-    .peg.right {
-      right: -48px;
-    }
-
-    .peg.p3,
-    .peg.p4 {
-      top: 42px;
-    }
-
-    .peg.p2,
-    .peg.p5 {
-      top: 118px;
-    }
-
-    .peg.p1,
-    .peg.p6 {
-      top: 194px;
-    }
-
-    .head-string {
-      background: rgba(255, 255, 255, 0.9);
-      bottom: 0;
-      position: absolute;
-      top: 32px;
-      transform-origin: bottom center;
-      width: 3px;
+      transform: translate(-50%, -50%);
+      width: 74px;
       z-index: 3;
     }
 
-    .head-string.s1 { left: 54px; transform: rotate(-13deg); }
-    .head-string.s2 { left: 64px; transform: rotate(-7deg); }
-    .head-string.s3 { left: 74px; transform: rotate(-2deg); }
-    .head-string.s4 { left: 84px; transform: rotate(2deg); }
-    .head-string.s5 { left: 94px; transform: rotate(7deg); }
-    .head-string.s6 { left: 104px; transform: rotate(13deg); }
-
-    .turn-arrow {
-      color: var(--yellow);
-      display: none;
-      font-size: 54px;
-      font-weight: 900;
-      line-height: 1;
-      position: absolute;
-      right: 18px;
-      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.65);
-      top: 44%;
-      z-index: 5;
+    .image-marker.selected {
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(120, 199, 123, 0.28);
     }
 
-    .turn-arrow.visible {
+    .image-marker.tighten {
+      background: var(--yellow);
+    }
+
+    .image-marker.loosen {
+      background: var(--red);
+      color: white;
+    }
+
+    .image-marker.tuned {
+      background: var(--green);
+    }
+
+    .marker-action {
+      background: rgba(21, 23, 24, 0.86);
+      border: 1px solid rgba(247, 241, 229, 0.2);
+      border-radius: 8px;
+      color: var(--paper);
+      display: none;
+      font-size: 20px;
+      font-weight: 900;
+      left: 50%;
+      padding: 9px 16px;
+      position: absolute;
+      text-align: center;
+      top: 12px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 4;
+    }
+
+    .marker-action.visible {
       display: block;
     }
 
-    .turn-arrow.loosen {
-      color: var(--red);
+    .marker-action.tighten {
+      background: rgba(255, 209, 102, 0.94);
+      color: #171305;
+    }
+
+    .marker-action.loosen {
+      background: rgba(255, 90, 95, 0.94);
+      color: white;
+    }
+
+    .marker-action.tuned {
+      background: rgba(120, 199, 123, 0.94);
+      color: #102113;
     }
 
     .hint {
@@ -502,16 +448,9 @@
 
     <section class="strings" id="strings"></section>
 
-    <section class="headstock-stage">
-      <div class="turn-arrow" id="turnArrow">↻</div>
-      <div class="headstock" id="headstock">
-        <div class="head-string s1"></div>
-        <div class="head-string s2"></div>
-        <div class="head-string s3"></div>
-        <div class="head-string s4"></div>
-        <div class="head-string s5"></div>
-        <div class="head-string s6"></div>
-      </div>
+    <section class="logo-stage" id="logoStage">
+      <img src="./app-icon.png" alt="">
+      <div class="marker-action" id="markerAction">Toque a corda</div>
     </section>
   </main>
 
@@ -543,8 +482,8 @@
     const centsText = document.getElementById('centsText');
     const tightenZone = document.getElementById('tightenZone');
     const loosenZone = document.getElementById('loosenZone');
-    const headstock = document.getElementById('headstock');
-    const turnArrow = document.getElementById('turnArrow');
+    const logoStage = document.getElementById('logoStage');
+    const markerAction = document.getElementById('markerAction');
 
     let deferredPrompt = null;
     let audioContext = null;
@@ -609,30 +548,47 @@
       });
     }
 
-    function renderHeadstock(tighten = false, loosen = false, tuned = false) {
-      const pegLayout = [
-        { number: 1, side: 'right', position: 'p1' },
-        { number: 2, side: 'right', position: 'p2' },
-        { number: 3, side: 'right', position: 'p3' },
-        { number: 4, side: 'left', position: 'p4' },
-        { number: 5, side: 'left', position: 'p5' },
-        { number: 6, side: 'left', position: 'p6' },
+    function renderImageMarkers(tighten = false, loosen = false, tuned = false, hasReading = false) {
+      const markerLayout = [
+        { number: 1, x: 72, y: 62 },
+        { number: 2, x: 72, y: 50 },
+        { number: 3, x: 70, y: 38 },
+        { number: 4, x: 30, y: 38 },
+        { number: 5, x: 28, y: 50 },
+        { number: 6, x: 28, y: 62 },
       ];
 
-      headstock.querySelectorAll('.peg').forEach((peg) => peg.remove());
+      logoStage.querySelectorAll('.image-marker').forEach((marker) => marker.remove());
 
-      pegLayout.forEach((pegInfo) => {
-        const peg = document.createElement('div');
-        const selected = STRINGS[selectedIndex].number === pegInfo.number;
-        peg.className = `peg ${pegInfo.side} ${pegInfo.position}${selected ? ' selected' : ''}`;
+      markerLayout.forEach((markerInfo) => {
+        const marker = document.createElement('div');
+        const selected = STRINGS[selectedIndex].number === markerInfo.number;
+        marker.className = `image-marker${selected ? ' selected' : ''}`;
 
-        if (selected && tighten) peg.classList.add('tighten');
-        if (selected && loosen) peg.classList.add('loosen');
-        if (selected && tuned) peg.classList.add('tuned');
+        if (selected && tighten) marker.classList.add('tighten');
+        if (selected && loosen) marker.classList.add('loosen');
+        if (selected && tuned) marker.classList.add('tuned');
 
-        peg.textContent = formatStringNumber(pegInfo.number);
-        headstock.appendChild(peg);
+        marker.style.left = `${markerInfo.x}%`;
+        marker.style.top = `${markerInfo.y}%`;
+        marker.textContent = formatStringNumber(markerInfo.number);
+        logoStage.appendChild(marker);
       });
+
+      markerAction.className = 'marker-action';
+      if (hasReading) {
+        markerAction.classList.add('visible');
+        if (tighten) {
+          markerAction.classList.add('tighten');
+          markerAction.textContent = 'Aperte a corda';
+        } else if (loosen) {
+          markerAction.classList.add('loosen');
+          markerAction.textContent = 'solta a corda';
+        } else if (tuned) {
+          markerAction.classList.add('tuned');
+          markerAction.textContent = 'Afinada';
+        }
+      }
     }
 
     function updateDisplay(cents, hasReading = true) {
@@ -647,10 +603,7 @@
       instruction.className = 'instruction';
       tightenZone.classList.toggle('visible', tighten);
       loosenZone.classList.toggle('visible', loosen);
-      turnArrow.classList.toggle('visible', tighten || loosen);
-      turnArrow.classList.toggle('loosen', loosen);
-      turnArrow.textContent = loosen ? '↺' : '↻';
-      renderHeadstock(tighten, loosen, tuned);
+      renderImageMarkers(tighten, loosen, tuned, hasReading);
 
       if (!hasReading) {
         instruction.textContent = 'Toque a corda';
@@ -778,7 +731,7 @@
     });
 
     renderStringButtons();
-    renderHeadstock();
+    renderImageMarkers();
     updateDisplay(0, false);
   </script>
 </body>
