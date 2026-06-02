@@ -1,4 +1,4 @@
-const CACHE_NAME = 'meu-primeiro-afinador-pwa-v5';
+const CACHE_NAME = 'meu-primeiro-afinador-pwa-v6';
 const PRECACHE = [
   './',
   './index.html',

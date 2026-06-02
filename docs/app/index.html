@@ -452,10 +452,12 @@
       { number: 6, note: 'E2', frequency: 82.41 },
     ];
 
-    const IN_TUNE_LIMIT = 5;
+    const IN_TUNE_LIMIT = 3;
+    const WEB_TUNER_OFFSET_CENTS = -7;
     const DISPLAY_LIMIT = 50;
     const MIN_FREQUENCY = 65;
     const MAX_FREQUENCY = 450;
+    const REQUIRED_STABLE_FRAMES = 3;
 
     const cover = document.getElementById('cover');
     const installButton = document.getElementById('installButton');
@@ -479,6 +481,9 @@
     let stream = null;
     let rafId = null;
     let selectedIndex = 0;
+    let lastFrequency = null;
+    let stableFrames = 0;
+    let smoothedCents = null;
 
     setTimeout(() => cover.classList.add('hidden'), 1800);
 
@@ -519,6 +524,12 @@
       return Math.min(Math.max(value, min), max);
     }
 
+    function resetReadingState() {
+      lastFrequency = null;
+      stableFrames = 0;
+      smoothedCents = null;
+    }
+
     function renderStringButtons() {
       stringsEl.innerHTML = '';
 
@@ -528,6 +539,7 @@
         button.textContent = formatStringNumber(guitarString.number);
         button.addEventListener('click', () => {
           selectedIndex = index;
+          resetReadingState();
           updateDisplay(0, false);
           renderStringButtons();
           statusText.textContent = `Toque a ${formatStringNumber(guitarString.number)} corda`;
@@ -577,19 +589,20 @@
 
     function updateDisplay(cents, hasReading = true) {
       const currentString = STRINGS[selectedIndex];
-      const roundedCents = Math.round(clamp(cents, -DISPLAY_LIMIT, DISPLAY_LIMIT));
-      const tuned = hasReading && Math.abs(roundedCents) <= IN_TUNE_LIMIT;
-      const tighten = hasReading && roundedCents < -IN_TUNE_LIMIT;
-      const loosen = hasReading && roundedCents > IN_TUNE_LIMIT;
+      const activeReading = hasReading && Number.isFinite(cents);
+      const roundedCents = activeReading ? Math.round(clamp(cents, -DISPLAY_LIMIT, DISPLAY_LIMIT)) : 0;
+      const tuned = activeReading && Math.abs(roundedCents) <= IN_TUNE_LIMIT;
+      const tighten = activeReading && roundedCents < -IN_TUNE_LIMIT;
+      const loosen = activeReading && roundedCents > IN_TUNE_LIMIT;
 
       stringNumber.textContent = formatStringNumber(currentString.number);
       stringBadge.className = 'string-badge';
       instruction.className = 'instruction';
       tightenZone.classList.toggle('visible', tighten);
       loosenZone.classList.toggle('visible', loosen);
-      renderImageMarkers(tighten, loosen, tuned, hasReading);
+      renderImageMarkers(tighten, loosen, tuned, activeReading);
 
-      if (!hasReading) {
+      if (!activeReading) {
         instruction.textContent = 'Toque a corda';
       } else if (tuned) {
         stringBadge.classList.add('tuned');
@@ -654,10 +667,22 @@
 
       if (frequency) {
         const currentString = STRINGS[selectedIndex];
-        const cents = centsFromFrequency(frequency, currentString.frequency);
-        updateDisplay(cents, true);
-        statusText.textContent = `${frequency.toFixed(2)} Hz`;
+        const stable = lastFrequency && Math.abs(centsFromFrequency(frequency, lastFrequency)) < 18;
+        stableFrames = stable ? stableFrames + 1 : 1;
+        lastFrequency = frequency;
+
+        if (stableFrames >= REQUIRED_STABLE_FRAMES) {
+          const calibratedCents = centsFromFrequency(frequency, currentString.frequency) + WEB_TUNER_OFFSET_CENTS;
+          smoothedCents = smoothedCents === null ? calibratedCents : (smoothedCents * 0.72) + (calibratedCents * 0.28);
+          updateDisplay(smoothedCents, true);
+          statusText.textContent = `${frequency.toFixed(2)} Hz`;
+        } else {
+          updateDisplay(0, false);
+          statusText.textContent = 'Ouvindo a corda...';
+        }
       } else {
+        resetReadingState();
+        updateDisplay(0, false);
         statusText.textContent = 'Toque a corda com som claro';
       }
 
@@ -685,6 +710,8 @@
         source.connect(analyser);
         micButton.textContent = 'Mic ligado';
         micButton.classList.add('active');
+        resetReadingState();
+        updateDisplay(0, false);
         statusText.textContent = `Toque a ${formatStringNumber(STRINGS[selectedIndex].number)} corda`;
         tick();
       } catch (error) {
@@ -703,6 +730,7 @@
       micButton.textContent = 'Ligar mic';
       micButton.classList.remove('active');
       statusText.textContent = 'Microfone desligado';
+      resetReadingState();
       updateDisplay(0, false);
     }
 
